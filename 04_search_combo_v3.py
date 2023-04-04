@@ -1,18 +1,19 @@
 """04 Search for combo meals
 Code that will search menu for a combo and return that combo for further use
-Trial 2: Enterbox
+Trial 1: Buttons
 """
 
 from easygui import *
 
 
 def search(menu):
-    while True:
-        selected_combo = enterbox("Enter the name of the combo\n\n(Assume "
-                                  "Capital Case)", "Search Combo").capitalize()
+    combos = list(menu.keys())  # Get list of all combo names
+    selected_combo = buttonbox("Please pick a combo", "Search Combo",
+                               combos + ["Cancel"])
 
-        if selected_combo in list(menu.keys()):
-            break
+    if selected_combo == "Cancel":
+        print("return", None)
+        return None
 
     # Display details
     print(f"* {selected_combo} *")
@@ -20,9 +21,8 @@ def search(menu):
         print(f"-{item[0]} - ${item[1]:.2f}")
 
     # Return combo name
-    if selected_combo != "Cancel":
-        return selected_combo
-    return None
+    print("return", selected_combo)
+    return selected_combo
 
 
 # Data storage
