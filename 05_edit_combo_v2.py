@@ -1,20 +1,20 @@
 """05 Edit Combo
 Code that allows user to edit an existing combo
-First functional version
+
 """
 
 from easygui import *
 
 
-def choose_item(combo):
+def choose_item(combo, combo_name):
     items = []
     for item in combo:
         items.append(f"{item[0]} ${item[1]:.2f}")
     items += ["Save", "Cancel"]
 
-    msg = f"COMBO NAME.....tk"
+    msg = f"Choose item from *{combo_name}*"
 
-    chosen_item_text = buttonbox("Choose item", choices=items)
+    chosen_item_text = buttonbox(msg, "Choose item", choices=items)
 
     if chosen_item_text in ("Save", "Cancel"):
         return chosen_item_text
@@ -32,36 +32,48 @@ def choose_item(combo):
 
 def get_new_price():
     try:
-        new_price = float(enterbox("Enter new price").strip("$"))
-    except ValueError:
-        msgbox("Please enter a valid number")
-        return get_new_price()
+        new_price = enterbox("Enter new price", "Set price").strip("$")
+
+        try:
+            new_price = float(new_price)
+        except ValueError:  # none-float input given
+            msgbox("Please enter a valid number", "Set price")
+            return get_new_price()
+
+    except AttributeError:  # no input given
+
+        return None
+
     return new_price
 
 
-def choose_attribute(item):
+def choose_attribute(item, combo_name):
     attributes = item
     attributes[1] = f"${attributes[1]:.2f}"  # format float as a currency str
 
-    attribute = buttonbox("Choose attribute", choices=item)
+    msg = f"Choose attribute from {item[0]} in {combo_name}\n\nName or Price"
+
+    attribute = buttonbox(msg, "Choose attribute", choices=item)
 
     attributes[1] = float(attributes[1].strip("$"))  # format back to float
 
     return attribute
 
 
-def set_attribute(combo, item, attribute):
+def set_attribute(item, attribute):
     item_temp = item.copy()
 
     # if price selected
     if attribute[0] == "$":
         new_price = get_new_price()
-        item_temp[1] = new_price
+        if new_price:  # if not None
+            item_temp[1] = new_price
 
     # if name selected
     else:
-        new_name = enterbox("Enter new name")
-        item_temp[0] = new_name
+        new_name = enterbox("Enter new name", "Set name")
+        if new_name:  # if not None
+            item_temp[0] = new_name
 
     return item_temp
 
@@ -72,20 +84,18 @@ def edit(menu, selected_combo):
 
     while True:
         # display possible items to choose, output selected item
-        selected_item = choose_item(combo_temp)
+        selected_item = choose_item(combo_temp, selected_combo)
         if selected_item == "Save":
             menu[selected_combo] = combo_temp
             return menu
         elif selected_item == "Cancel":
-            print("cancel", menu)
             return menu
         else:
             # display attributes of item to choose, output selected attribute
-            selected_attribute = choose_attribute(selected_item)
+            selected_attribute = choose_attribute(selected_item, selected_combo)
 
             # allow user to re-enter attribute, output new item
-            item_temp = set_attribute(combo_temp, selected_item,
-                                      selected_attribute)
+            item_temp = set_attribute(selected_item, selected_attribute)
 
             # set new item in combo temp
             for i, item in enumerate(combo_temp):
