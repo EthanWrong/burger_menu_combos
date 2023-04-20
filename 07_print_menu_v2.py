@@ -6,6 +6,7 @@ and add"""
 
 from easygui import *
 
+
 def print_combo(combo, combo_name):
 
     # find total price of combo
