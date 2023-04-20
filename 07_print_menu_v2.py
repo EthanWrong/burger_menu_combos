@@ -4,6 +4,8 @@ in other parts of the code to easily print a combo e.g. in search, edit,
 and add"""
 
 
+from easygui import *
+
 def print_combo(combo, combo_name):
 
     # find total price of combo
@@ -26,6 +28,8 @@ def print_menu(menu):
 
     for combo in menu:
         print_combo(menu[combo], combo)
+
+    msgbox("Menu has been printed to Python Console.")
 
 
 # Data storage
